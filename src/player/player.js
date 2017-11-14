@@ -1,3 +1,4 @@
+import {requestFullscreen, exitFullscreen} from '../fullscreen/index.js';
 import config from './config.js';
 import classNames from './classnames.js';
 
