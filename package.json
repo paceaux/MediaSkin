@@ -1,0 +1,33 @@
+{
+  "name": "video-skin",
+  "version": "0.0.1",
+  "description": "Lightweight video player for HTML5 browsers",
+  "main": "lib/videoskin.js",
+  "style": "lib/videoskin.css",
+  "directories": {
+    "lib": "./lib"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "watch": "rollup -c -w",
+    "prepare": "npm run-script build",
+    "pretest": "eslint src/**/*.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "video",
+    "player",
+    "HTML5",
+    "video",
+    "audio"
+  ],
+  "author": "Frank M. Taylor",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-preset-es2015-rollup": "^3.0.0",
+    "eslint": "^4.11.0",
+    "rollup": "^0.51.5",
+    "rollup-plugin-buble": "^0.17.0",
+    "rollup-plugin-eslint": "^4.0.0"
+  }
+}
