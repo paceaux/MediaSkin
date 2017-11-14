@@ -13,6 +13,7 @@ export default class MediaPlayer {
 			//todo: figure out if we should use a setState function, instead of accessing these directly
 			// see if can bind event to this, so things respond when state on object changes
 			this.state = {
+				hasInitalized: false,
 				hasLoaded: false,
 				hasEnded: false,
 				hasStarted: true,
@@ -432,7 +433,7 @@ export default class MediaPlayer {
 
 		wrapMedia() {
 			const originalMediaEl = this.mediaEl;
-			const clone = originalMediaEl.cloneNode();
+			const clone = originalMediaEl.cloneNode(true);
 
 			this.wrapperEl = this.createPlayerWrapper();
 			this.mediaEl.parentNode.insertBefore(this.wrapperEl, originalMediaEl);
@@ -444,6 +445,7 @@ export default class MediaPlayer {
 		}
 
 		init() {
+			if(this.state.hasInitalized) return;
 			this.mediaEl.classList.add(this.classNames.video);
 			this.wrapMedia();
 			this.controlsEl = this.createControlsWrapper();
@@ -451,6 +453,8 @@ export default class MediaPlayer {
 			this.addControls();
 			this.wrapperEl.append(this.controlsEl);
 			this.bindPlayerEvents();
+
+			this.state.hasInitalized = true;
 		}
 	}
 	
