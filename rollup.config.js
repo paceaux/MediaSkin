@@ -1,4 +1,4 @@
-import buble from 'rollup-plugin-buble';
+import babel from 'rollup-plugin-babel';
 import eslint from 'rollup-plugin-eslint';
 
 const production = !process.env.ROLLUP_WATCH;
@@ -13,7 +13,11 @@ export default {
   },
   name: "MediaSkin",
   plugins: [ 
-    eslint(),    
-    buble({namedFunctionExpressions: false})
+    eslint(),
+    babel(
+      {
+        exclude: 'node_modules/**'
+      }
+    )    
  ]
 };
