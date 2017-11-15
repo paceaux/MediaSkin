@@ -51,39 +51,44 @@ export default class MediaPlayer {
 		get controlCallbacks() {
 			return {
 				play: (evt) => {
-					const buttonData = this.config.controlToggleButtons[evt.target.dataset.controlToggleName];
 					const target = evt.target;
+					const buttonData = this.config.controlToggleButtons[target.dataset.controlToggleName];
+					const updateElement = target.dataset.updatesControlElement ? this.controlElements[target.dataset.updatesControlElement] : evt.target;
 
 					this.state.isPlaying = !this.state.isPlaying;
 					if (this.state.isPlaying) {
 						this.play();
-						target.classList.add(buttonData.classes.isOn);
-						target.innerText = buttonData.content.isOn;
+						updateElement.classList.add(buttonData.classes.isOn);
+						updateElement.innerText = buttonData.content.isOn;
 						
 					} else {
 						this.pause();
-						target.classList.remove(buttonData.classes.isOn);
-						target.innerText = buttonData.content.isOff;
+						updateElement.classList.remove(buttonData.classes.isOn);
+						updateElement.innerText = buttonData.content.isOff;
 					}
 				},
 				mute: (evt) => {
 					const buttonData = this.config.controlToggleButtons[evt.target.dataset.controlToggleName];
 					const target = evt.target;
+					const updateElement = target.dataset.updatesControlElement ? this.controlElements[target.dataset.updatesControlElement] : evt.target;
+					
 					
 					this.state.isMuted = !this.state.isMuted;
 					
 					this.mute();
-					target.classList.toggle(buttonData.classes.isOn);
-					target.innerText = this.state.isMuted ? buttonData.content.isOn : buttonData.content.isOff;
+					updateElement.classList.toggle(buttonData.classes.isOn);
+					updateElement.innerText = this.state.isMuted ? buttonData.content.isOn : buttonData.content.isOff;
 				},
 				fullscreen: (evt) => {
 					const buttonData = this.config.controlToggleButtons[evt.target.dataset.controlToggleName];
 					const target = evt.target;
+					const updateElement = target.dataset.updatesControlElement ? this.controlElements[target.dataset.updatesControlElement] : evt.target;
+					
 					
 					this.state.isFullscreen = !this.state.isFullscreen;
 
-					target.classList.toggle(buttonData.classes.isOn);
-					target.innerText = this.state.isMuted ? buttonData.content.isOn : buttonData.content.isOff;
+					updateElement.classList.toggle(buttonData.classes.isOn);
+					updateElement.innerText = this.state.isMuted ? buttonData.content.isOn : buttonData.content.isOff;
 					
 					this.fullscreen();
 				},
@@ -425,6 +430,43 @@ export default class MediaPlayer {
 				if (this.playerCallbacks[playerEvent]) this.mediaEl.addEventListener(playerEvent, this.playerCallbacks[playerEvent]);
 			}
 		}
+
+		/** Binds a click event to an element and fires an event
+		 * @param  {string} evtName name of the event that should be fired on player
+		 * @param  {string} triggerSelector css selector
+		 */
+		bindUiTrigger(evtName, triggerSelector) {
+			const triggerNodes = this.wrapperEl.querySelectorAll(triggerSelector);
+	
+			[...triggerNodes].forEach((triggerNode) => {
+				const triggerEl = triggerNode;
+				triggerEl.dataset.controlToggleName = evtName;
+				triggerEl.dataset.updatesControlElement = evtName;
+
+				triggerEl.addEventListener('click',	this.controlCallbacks[evtName]);
+			});
+			
+
+		}
+
+		bindUiTriggers(uiTriggersObj) {
+
+			for (let evtName in uiTriggersObj) {			
+				if (this.controlCallbacks[evtName]) {
+					const triggers = this.config.uiTriggers[evtName];
+					
+					if (Array.isArray(triggers)) {
+						triggers.forEach((trigger) => {
+							this.bindUiTrigger(evtName, trigger);
+						});
+					}
+
+					if (typeof triggers === 'string') {
+						this.bindUiTrigger(evtName, triggers);
+					}
+				}
+			}
+		}
 	
 		addControl(element, controlType, eventType) {
 			const el = element;
@@ -454,6 +496,7 @@ export default class MediaPlayer {
 			this.addControls();
 			this.wrapperEl.append(this.controlsEl);
 			this.bindPlayerEvents();
+			this.bindUiTriggers(this.config.uiTriggers);
 
 			this.state.hasInitalized = true;
 		}

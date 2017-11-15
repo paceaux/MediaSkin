@@ -38,5 +38,8 @@ export default {
         duration: true,
         loading: false,
         timeDisplay: true,
+    },
+    uiTriggers: {
+        play: ['video'] // can be string or array
     }
 };
